@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ShortenLinkApi.Extensions;
+using Microsoft.Extensions.Options;
+using ShortenLinkApi.Models;
+using ShortenLinkApi.Services;
 
 namespace ShortenLinkApi
 {
@@ -26,7 +29,15 @@ namespace ShortenLinkApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.Configure<DbSettings>(
+                Configuration.GetSection(nameof(DbSettings)));
+
+            services.AddSingleton<IDbSettings>(sp =>
+                sp.GetRequiredService<IOptions<DbSettings>>().Value);
+
+            services.AddSingleton<LinkServices>();
+
+            services.AddControllers().AddNewtonsoftJson(options => options.UseMemberCasing());
 
             services.ConfigureSwagger();
         }
