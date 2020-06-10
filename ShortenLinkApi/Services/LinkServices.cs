@@ -18,23 +18,23 @@ namespace ShortenLinkApi.Services
             _links = database.GetCollection<Link>(settings.LinksCollectionName);
         }
 
-        public Task<List<Link>> Get() => _links.Find(i => true).ToListAsync();
 
         public async Task<Link> Get(string shortUrl)
         {
             var item = await _links.Find(i => i.ShortUrl == shortUrl).FirstOrDefaultAsync();
             if (item == null) return null;
             item.Count++;
-            _links.ReplaceOne(i => i.Id == item.Id, item);
+            await _links.ReplaceOneAsync(i => i.Id == item.Id, item);
 
             return item;
         }
+        public Task<List<Link>> GetListBySession(string session) => _links.Find(i => i.Session == session).ToListAsync();
 
-        public async Task<Link> Create(string url)
+        public async Task<Link> Create(string url, string sesion)
         {
             var item = await _links.Find(i => i.Url == url).FirstOrDefaultAsync();
             if (item != null) return item;
-            item = new Link() { Url = url, ShortUrl = Utils.GetRandomString() };
+            item = new Link() { Session = sesion, Url = url, ShortUrl = Utils.GetRandomString() };
             _links.InsertOne(item);
             return item;
         }

@@ -12,7 +12,7 @@ namespace ShortenLinkApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LinksController : ControllerBase
+    public class LinksController : ControllerWithSession
     {
         private readonly LinkServices _service;
 
@@ -23,7 +23,7 @@ namespace ShortenLinkApi.Controllers
 
         // GET: api/Links
         [HttpGet]
-        public Task<List<Link>> Get() => _service.Get();
+        public Task<List<Link>> Get() => _service.GetListBySession(Session);
 
         // GET: api/Links/5
         [HttpGet("{shortUrl}", Name = "Get")]
@@ -31,6 +31,6 @@ namespace ShortenLinkApi.Controllers
 
         // POST: api/Links
         [HttpPost]
-        public Task<Link> Post([FromBody] string url) => _service.Create(url);
+        public Task<Link> Post([FromBody] string url) => _service.Create(url, Session);
     }
 }
