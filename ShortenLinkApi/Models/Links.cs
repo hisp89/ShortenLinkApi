@@ -12,5 +12,7 @@ namespace ShortenLinkApi.Models
         public string ShortUrl { get; set; }
         public long Count { get; set; }
         public string Session { get; set; }
+
+        public string ShortUrlAbsolute { get { return $"{Startup.Domain}/{ShortUrl}"; } }
     }
 }

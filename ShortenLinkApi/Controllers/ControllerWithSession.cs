@@ -10,14 +10,15 @@ namespace ShortenLinkApi.Controllers
 {
     public class ControllerWithSession : ControllerBase
     {
+        private string sessionkey = ".Session";
         public string Session {
             get
             {
-                var sessionid = HttpContext.Session.GetString(".Session");
-                if (sessionid == null)
+                var sessionid = HttpContext.Request.Cookies.ContainsKey(sessionkey) ? HttpContext.Request.Cookies[sessionkey] : "";
+                if (string.IsNullOrWhiteSpace(sessionid))
                 {
                     sessionid = Utils.GetRandomString();
-                    HttpContext.Session.SetString(".Session", sessionid);
+                    HttpContext.Response.Cookies.Append(sessionkey, sessionid);
                 }
                 return sessionid;
             } 

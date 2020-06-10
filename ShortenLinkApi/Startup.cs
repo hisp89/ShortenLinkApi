@@ -19,9 +19,11 @@ namespace ShortenLinkApi
 {
     public class Startup
     {
+        public static string Domain { get; set; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            Domain = Configuration["Domain"];
         }
 
         public IConfiguration Configuration { get; }
@@ -29,9 +31,6 @@ namespace ShortenLinkApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDistributedMemoryCache();
-            services.AddSession();
-
             services.Configure<DbSettings>(
                 Configuration.GetSection(nameof(DbSettings)));
 
@@ -60,8 +59,6 @@ namespace ShortenLinkApi
             app.UseAuthorization();
 
             app.MyUseSwagger();
-
-            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {

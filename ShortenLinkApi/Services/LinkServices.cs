@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using ShortenLinkApi.Models;
@@ -18,14 +19,14 @@ namespace ShortenLinkApi.Services
             _links = database.GetCollection<Link>(settings.LinksCollectionName);
         }
 
-
         public async Task<Link> Get(string shortUrl)
         {
+            shortUrl = WebUtility.UrlDecode(shortUrl).Replace($"{Startup.Domain}/", "");
             var item = await _links.Find(i => i.ShortUrl == shortUrl).FirstOrDefaultAsync();
             if (item == null) return null;
             item.Count++;
-            await _links.ReplaceOneAsync(i => i.Id == item.Id, item);
-
+            //await _links.ReplaceOneAsync(i => i.Id == item.Id, item);
+            await _links.UpdateOneAsync(i => i.Id == item.Id, Builders<Link>.Update.Inc(j => j.Count,1));
             return item;
         }
         public Task<List<Link>> GetListBySession(string session) => _links.Find(i => i.Session == session).ToListAsync();
