@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ShortenLinkApi.Extensions;
 
 namespace ShortenLinkApi
 {
@@ -26,6 +27,8 @@ namespace ShortenLinkApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.ConfigureSwagger();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +44,8 @@ namespace ShortenLinkApi
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.MyUseSwagger();
 
             app.UseEndpoints(endpoints =>
             {
